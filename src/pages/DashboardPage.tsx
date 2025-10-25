@@ -45,7 +45,7 @@ export const DashboardPage: React.FC = () => {
 
       // Get total users count
       const { count: usersCount, error: usersError } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .select('*', { count: 'exact', head: true });
 
       if (usersError) throw usersError;
@@ -66,9 +66,9 @@ export const DashboardPage: React.FC = () => {
 
   if (!isOwner && !isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F7F8FA]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#1E293B] mb-2">{t('accessDenied')}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('accessDenied')}</h2>
           <p className="text-gray-600">{t('noPermission')}</p>
         </div>
       </div>
@@ -77,9 +77,9 @@ export const DashboardPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F7F8FA]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#177BFF] mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">{t('loading')}</p>
         </div>
       </div>
@@ -130,13 +130,13 @@ export const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-2">
-            <BarChart3 className="w-8 h-8 text-[#177BFF]" />
-            <h1 className="text-3xl font-bold text-[#1E293B]">{t('dashboard')}</h1>
+            <BarChart3 className="w-8 h-8 text-blue-600" />
+            <h1 className="text-3xl font-bold text-gray-900">{t('dashboard')}</h1>
           </div>
           <p className="text-gray-600">{t('dashboardDescription')}</p>
         </div>
@@ -152,18 +152,18 @@ export const DashboardPage: React.FC = () => {
                 <stat.icon className={`w-6 h-6 ${stat.iconColor}`} />
               </div>
               <p className="text-gray-600 text-sm mb-1">{stat.label}</p>
-              <p className="text-3xl font-bold text-[#1E293B]">{stat.value}</p>
+              <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
             </div>
           ))}
         </div>
 
         {/* Chart Placeholder */}
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h2 className="text-xl font-bold text-[#1E293B] mb-4 flex items-center space-x-2">
-            <TrendingUp className="w-5 h-5 text-[#177BFF]" />
+          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+            <TrendingUp className="w-5 h-5 text-blue-600" />
             <span>{t('activityOverview')}</span>
           </h2>
-          <div className="h-64 flex items-center justify-center bg-[#F7F8FA] rounded-lg">
+          <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
             <p className="text-gray-500">{t('chartComingSoon')}</p>
           </div>
         </div>

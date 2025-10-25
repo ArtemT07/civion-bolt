@@ -115,6 +115,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                           <span>{t('dashboard')}</span>
                         </button>
                       )}
+                      {isOwner && (
+                        <button
+                          onClick={() => {
+                            onNavigate('users');
+                            setIsProfileMenuOpen(false);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
+                        >
+                          <User size={16} />
+                          <span>{t('userManagement')}</span>
+                        </button>
+                      )}
                       <button
                         onClick={() => {
                           onNavigate('projects');

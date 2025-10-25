@@ -31,7 +31,7 @@ export const UserManagementPage: React.FC = () => {
     try {
       // Get all user profiles
       const { data: profiles, error: profilesError } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -99,9 +99,9 @@ export const UserManagementPage: React.FC = () => {
 
   if (!isOwner) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F7F8FA]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#1E293B] mb-2">{t('accessDenied')}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('accessDenied')}</h2>
           <p className="text-gray-600">{t('ownerOnly')}</p>
         </div>
       </div>
@@ -110,9 +110,9 @@ export const UserManagementPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F7F8FA]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#177BFF] mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">{t('loading')}</p>
         </div>
       </div>
@@ -120,13 +120,13 @@ export const UserManagementPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-2">
-            <Users className="w-8 h-8 text-[#177BFF]" />
-            <h1 className="text-3xl font-bold text-[#1E293B]">{t('userManagement')}</h1>
+            <Users className="w-8 h-8 text-blue-600" />
+            <h1 className="text-3xl font-bold text-gray-900">{t('userManagement')}</h1>
           </div>
           <p className="text-gray-600">{t('manageUsersAndRoles')}</p>
         </div>
@@ -140,7 +140,7 @@ export const UserManagementPage: React.FC = () => {
               placeholder={t('searchUsers')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#177BFF] focus:border-transparent bg-white text-[#1E293B]"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
             />
           </div>
         </div>
@@ -171,7 +171,7 @@ export const UserManagementPage: React.FC = () => {
               {filteredUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-[#1E293B]">{user.full_name}</div>
+                    <div className="text-sm font-medium text-gray-900">{user.full_name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-600">{user.email}</div>
@@ -211,7 +211,7 @@ export const UserManagementPage: React.FC = () => {
                         setSelectedUser(user);
                         setShowRoleModal(true);
                       }}
-                      className="text-[#177BFF] hover:text-blue-700 transition-colors"
+                      className="text-blue-600 hover:text-blue-700 transition-colors"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
@@ -227,8 +227,8 @@ export const UserManagementPage: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl max-w-md w-full p-6">
               <div className="flex items-center space-x-3 mb-4">
-                <Shield className="w-6 h-6 text-[#177BFF]" />
-                <h3 className="text-xl font-bold text-[#1E293B]">{t('manageRoles')}</h3>
+                <Shield className="w-6 h-6 text-blue-600" />
+                <h3 className="text-xl font-bold text-gray-900">{t('manageRoles')}</h3>
               </div>
 
               <p className="text-gray-600 mb-4">
@@ -240,7 +240,7 @@ export const UserManagementPage: React.FC = () => {
                   const hasRole = selectedUser.roles.includes(role);
                   return (
                     <div key={role} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <span className="text-sm font-medium text-[#1E293B]">{t(role)}</span>
+                      <span className="text-sm font-medium text-gray-900">{t(role)}</span>
                       {hasRole ? (
                         <button
                           onClick={() => handleRemoveRole(selectedUser.id, role)}
@@ -251,7 +251,7 @@ export const UserManagementPage: React.FC = () => {
                       ) : (
                         <button
                           onClick={() => handleAssignRole(selectedUser.id, role)}
-                          className="text-[#177BFF] hover:text-blue-700 text-sm font-medium"
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                         >
                           {t('assign')}
                         </button>
@@ -266,7 +266,7 @@ export const UserManagementPage: React.FC = () => {
                   setShowRoleModal(false);
                   setSelectedUser(null);
                 }}
-                className="w-full bg-gray-100 text-[#1E293B] px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                className="w-full bg-gray-100 text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
               >
                 {t('close')}
               </button>

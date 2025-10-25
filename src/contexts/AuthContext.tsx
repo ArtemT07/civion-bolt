@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchProfileAndRoles = async (userId: string) => {
     try {
       const [profileResult, rolesResult] = await Promise.all([
-        supabase.from('user_profiles').select('*').eq('id', userId).maybeSingle(),
+        supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
         supabase.from('user_roles').select('role').eq('user_id', userId)
       ]);
 
@@ -136,7 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       const { error } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .update(updates)
         .eq('id', user.id);
 
