@@ -33,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
 
   return (
     <>
-      <nav className="bg-white shadow-lg sticky top-0 z-40 border-b border-gray-100">
+      <nav className="bg-gray-50 shadow-lg sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center cursor-pointer" onClick={() => onNavigate('home')}>
@@ -47,8 +47,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   onClick={() => onNavigate(item.key)}
                   className={`px-3 py-2 rounded-lg font-medium text-sm transition-all ${
                     currentPage === item.key
-                      ? 'bg-[#177BFF] text-white shadow-md'
-                      : 'text-[#1E293B] hover:bg-[#F7F8FA]'
+                      ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white shadow-md'
+                      : 'text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   {item.label}
@@ -57,13 +57,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
-              <div className="flex items-center space-x-2 bg-[#F7F8FA] rounded-lg p-1">
+              <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
                 <button
                   onClick={() => setLanguage('es')}
                   className={`px-3 py-1 rounded-md text-sm font-semibold transition-all ${
                     language === 'es'
-                      ? 'bg-white text-[#177BFF] shadow-sm'
-                      : 'text-gray-600 hover:text-[#1E293B]'
+                      ? 'bg-gray-50 text-red-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   ES
@@ -72,8 +72,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   onClick={() => setLanguage('en')}
                   className={`px-3 py-1 rounded-md text-sm font-semibold transition-all ${
                     language === 'en'
-                      ? 'bg-white text-[#177BFF] shadow-sm'
-                      : 'text-gray-600 hover:text-[#1E293B]'
+                      ? 'bg-gray-50 text-blue-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   EN
@@ -84,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                 <div className="relative">
                   <button
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                    className="w-12 h-12 rounded-full bg-[#177BFF] flex items-center justify-center text-white font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 ring-2 ring-white"
+                    className="w-12 h-12 rounded-full bg-gradient-to-br from-red-600 to-blue-600 flex items-center justify-center text-white font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 ring-2 ring-white"
                   >
                     {profile?.avatar_url ? (
                       <img
@@ -98,9 +98,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   </button>
 
                   {isProfileMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100">
+                    <div className="absolute right-0 mt-2 w-56 bg-gray-50 rounded-lg shadow-xl py-2 border border-gray-100">
                       <div className="px-4 py-3 border-b border-gray-100">
-                        <p className="text-sm font-semibold text-[#1E293B]">{profile?.full_name}</p>
+                        <p className="text-sm font-semibold text-gray-900">{profile?.full_name}</p>
                         <p className="text-xs text-gray-500 truncate">{profile?.email}</p>
                       </div>
                       {(isOwner || isAdmin) && (
@@ -109,7 +109,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                             onNavigate('dashboard');
                             setIsProfileMenuOpen(false);
                           }}
-                          className="w-full px-4 py-2 text-left text-sm text-[#1E293B] hover:bg-[#F7F8FA] flex items-center space-x-2 transition-colors"
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
                         >
                           <LayoutDashboard size={16} />
                           <span>{t('dashboard')}</span>
@@ -120,7 +120,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                           onNavigate('projects');
                           setIsProfileMenuOpen(false);
                         }}
-                        className="w-full px-4 py-2 text-left text-sm text-[#1E293B] hover:bg-[#F7F8FA] flex items-center space-x-2 transition-colors"
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
                       >
                         <FolderOpen size={16} />
                         <span>{t('myProjects')}</span>
@@ -130,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                           onNavigate('profile');
                           setIsProfileMenuOpen(false);
                         }}
-                        className="w-full px-4 py-2 text-left text-sm text-[#1E293B] hover:bg-[#F7F8FA] flex items-center space-x-2 transition-colors"
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
                       >
                         <Settings size={16} />
                         <span>{t('settings')}</span>
@@ -148,7 +148,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
               ) : (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="bg-[#177BFF] text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 transition-all transform hover:scale-105 shadow-lg"
+                  className="bg-gradient-to-r from-red-600 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-red-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg"
                 >
                   {t('login')}
                 </button>
@@ -165,7 +165,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="md:hidden bg-gray-50 border-t border-gray-200">
             <div className="px-4 py-3 space-y-2">
               {navItems.map((item) => (
                 <button
@@ -176,20 +176,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   }}
                   className={`block w-full text-left px-4 py-3 rounded-lg font-medium transition-all ${
                     currentPage === item.key
-                      ? 'bg-[#177BFF] text-white'
-                      : 'text-[#1E293B] hover:bg-[#F7F8FA]'
+                      ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   {item.label}
                 </button>
               ))}
 
-              <div className="flex items-center justify-center space-x-2 bg-[#F7F8FA] rounded-lg p-1 my-3">
+              <div className="flex items-center justify-center space-x-2 bg-gray-100 rounded-lg p-1 my-3">
                 <button
                   onClick={() => setLanguage('es')}
                   className={`flex-1 py-2 rounded-md text-sm font-semibold transition-all ${
                     language === 'es'
-                      ? 'bg-white text-[#177BFF] shadow-sm'
+                      ? 'bg-gray-50 text-red-600 shadow-sm'
                       : 'text-gray-600'
                   }`}
                 >
@@ -199,7 +199,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   onClick={() => setLanguage('en')}
                   className={`flex-1 py-2 rounded-md text-sm font-semibold transition-all ${
                     language === 'en'
-                      ? 'bg-white text-[#177BFF] shadow-sm'
+                      ? 'bg-gray-50 text-blue-600 shadow-sm'
                       : 'text-gray-600'
                   }`}
                 >
@@ -214,7 +214,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                       onNavigate('profile');
                       setIsMenuOpen(false);
                     }}
-                    className="w-full text-left px-4 py-3 rounded-lg text-[#1E293B] hover:bg-[#F7F8FA] flex items-center space-x-2"
+                    className="w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                   >
                     <User size={20} />
                     <span>{t('profile')}</span>
@@ -236,7 +236,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                     setIsAuthModalOpen(true);
                     setIsMenuOpen(false);
                   }}
-                  className="w-full bg-[#177BFF] text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:bg-blue-600 transition-colors"
+                  className="w-full bg-gradient-to-r from-red-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg"
                 >
                   {t('login')}
                 </button>
