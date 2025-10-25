@@ -10,6 +10,8 @@ import { MaterialsPage } from './pages/MaterialsPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { DashboardPage } from './pages/DashboardPage';
 import { UserManagementPage } from './pages/UserManagementPage';
+import { ProjectsPage } from './pages/ProjectsPage';
+import { MaterialsManagementPage } from './pages/MaterialsManagementPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -32,6 +34,10 @@ function App() {
         return <DashboardPage />;
       case 'users':
         return <UserManagementPage />;
+      case 'projects':
+        return <ProjectsPage />;
+      case 'materials-management':
+        return <MaterialsManagementPage />;
       default:
         return <HomePage onNavigate={setCurrentPage} />;
     }

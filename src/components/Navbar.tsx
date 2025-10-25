@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, LogOut, Settings, LayoutDashboard, FolderOpen, User } from 'lucide-react';
+import { Menu, X, LogOut, Settings, LayoutDashboard, FolderOpen, User, Package } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AuthModal } from './AuthModal';
@@ -14,7 +14,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const { user, profile, signOut, isOwner, isAdmin } = useAuth();
+  const { user, profile, signOut, isOwner, isAdmin, isMaterialsManager } = useAuth();
   const { language, setLanguage, t } = useLanguage();
 
   const navItems = [
@@ -125,6 +125,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                         >
                           <User size={16} />
                           <span>{t('userManagement')}</span>
+                        </button>
+                      )}
+                      {(isOwner || isAdmin || isMaterialsManager) && (
+                        <button
+                          onClick={() => {
+                            onNavigate('materials-management');
+                            setIsProfileMenuOpen(false);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
+                        >
+                          <Package size={16} />
+                          <span>{t('materialsManagement')}</span>
                         </button>
                       )}
                       <button
