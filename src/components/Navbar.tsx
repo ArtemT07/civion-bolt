@@ -17,13 +17,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
   const { user, profile, signOut, isOwner, isAdmin, isMaterialsManager } = useAuth();
   const { language, setLanguage, t } = useLanguage();
 
-  const navItems = [
-    { key: 'home', label: t('home') },
-    { key: 'about', label: t('about') },
-    { key: 'calculator', label: t('calculator') },
-    { key: 'contacts', label: t('contacts') },
-    { key: 'materials', label: t('materials') },
-  ];
+  const navItems = user
+    ? [
+        { key: 'about', label: t('about') },
+        { key: 'calculator', label: t('calculator') },
+        { key: 'contacts', label: t('contacts') },
+        { key: 'materials', label: t('materials') },
+      ]
+    : [
+        { key: 'home', label: t('home') },
+        { key: 'about', label: t('about') },
+        { key: 'calculator', label: t('calculator') },
+        { key: 'contacts', label: t('contacts') },
+        { key: 'materials', label: t('materials') },
+      ];
 
   const handleSignOut = async () => {
     await signOut();

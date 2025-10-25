@@ -53,6 +53,14 @@ export const AboutPage: React.FC = () => {
           </p>
         </div>
 
+        <div className="mb-16">
+          <img
+            src="https://images.pexels.com/photos/1216589/pexels-photo-1216589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            alt="Construction"
+            className="w-full h-96 object-cover rounded-3xl shadow-2xl"
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-blue-600 rounded-3xl transform -rotate-3"></div>

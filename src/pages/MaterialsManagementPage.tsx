@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Package, Plus, Edit2, Trash2, Search, X, Save, FolderPlus } from 'lucide-react';
+import { Package, Plus, Edit2, Trash2, Search, X, Save, FolderPlus, Upload } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
@@ -43,6 +43,7 @@ export const MaterialsManagementPage: React.FC = () => {
   const [editingMaterial, setEditingMaterial] = useState<Material | null>(null);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   const [materialForm, setMaterialForm] = useState({
     name_es: '',
@@ -150,6 +151,38 @@ export const MaterialsManagementPage: React.FC = () => {
       });
     }
     setShowMaterialModal(true);
+  };
+
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingPhoto(true);
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+      const filePath = `materials/${fileName}`;
+
+      const { error: uploadError, data } = await supabase.storage
+        .from('materials')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('materials')
+        .getPublicUrl(filePath);
+
+      setMaterialForm({ ...materialForm, photo_url: publicUrlData.publicUrl });
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      alert(language === 'es' ? 'Error subiendo foto' : 'Error uploading photo');
+    } finally {
+      setUploadingPhoto(false);
+    }
   };
 
   const saveMaterial = async () => {
@@ -533,25 +566,66 @@ export const MaterialsManagementPage: React.FC = () => {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   {t('unit')}
                 </label>
-                <input
-                  type="text"
+                <select
                   value={materialForm.unit}
                   onChange={(e) => setMaterialForm({...materialForm, unit: e.target.value})}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
+                >
+                  <option value="m²">m² (metros cuadrados)</option>
+                  <option value="m³">m³ (metros cúbicos)</option>
+                  <option value="m">m (metros lineales)</option>
+                  <option value="kg">kg (kilogramos)</option>
+                  <option value="t">t (toneladas)</option>
+                  <option value="l">l (litros)</option>
+                  <option value="gal">gal (galones)</option>
+                  <option value="pza">pza (pieza)</option>
+                  <option value="caja">caja</option>
+                  <option value="bulto">bulto/saco</option>
+                  <option value="unidad">unidad</option>
+                </select>
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  {t('photoUrl')}
+                  {t('photo')}
                 </label>
-                <input
-                  type="text"
-                  value={materialForm.photo_url}
-                  onChange={(e) => setMaterialForm({...materialForm, photo_url: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="https://..."
-                />
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <label className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        className="hidden"
+                        id="photo-upload"
+                      />
+                      <div className="flex items-center justify-center space-x-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 transition-colors cursor-pointer">
+                        <Upload size={20} className="text-gray-600" />
+                        <span className="text-sm text-gray-600">
+                          {uploadingPhoto
+                            ? (language === 'es' ? 'Subiendo...' : 'Uploading...')
+                            : (language === 'es' ? 'Seleccionar archivo' : 'Select file')}
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                  {materialForm.photo_url && (
+                    <div className="relative">
+                      <img
+                        src={materialForm.photo_url}
+                        alt="Preview"
+                        className="w-full h-32 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setMaterialForm({...materialForm, photo_url: ''})}
+                        className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full hover:bg-red-700"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center space-x-6">
