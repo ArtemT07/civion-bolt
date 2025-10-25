@@ -34,7 +34,7 @@ function App() {
   return (
     <AuthProvider>
       <LanguageProvider>
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-gray-100">
           <Navbar currentPage={currentPage} onNavigate={setCurrentPage} />
           <main>{renderPage()}</main>
         </div>

@@ -40,7 +40,7 @@ export const CalculatorPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100">
+        <div className="bg-gray-50 rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100">
           <div className="space-y-8">
             <div>
               <label className="block text-lg font-semibold text-gray-900 mb-3">
@@ -130,19 +130,19 @@ export const CalculatorPage: React.FC = () => {
         </div>
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 text-center">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-lg border border-gray-100 text-center">
             <p className="text-3xl font-bold text-red-600 mb-2">DOP 1,200</p>
             <p className="text-sm text-gray-600">
               {language === 'es' ? 'Por m² Residencial' : 'Per m² Residential'}
             </p>
           </div>
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 text-center">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-lg border border-gray-100 text-center">
             <p className="text-3xl font-bold text-blue-600 mb-2">DOP 1,800</p>
             <p className="text-sm text-gray-600">
               {language === 'es' ? 'Por m² Comercial' : 'Per m² Commercial'}
             </p>
           </div>
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 text-center">
+          <div className="bg-gray-50 rounded-xl p-6 shadow-lg border border-gray-100 text-center">
             <p className="text-3xl font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent mb-2">24/7</p>
             <p className="text-sm text-gray-600">
               {language === 'es' ? 'Soporte al Cliente' : 'Customer Support'}

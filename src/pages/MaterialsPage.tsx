@@ -93,7 +93,7 @@ export const MaterialsPage: React.FC = () => {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-100"
+                className="bg-gray-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-100"
               >
                 <div className={`w-16 h-16 bg-gradient-to-br ${material.color} rounded-xl flex items-center justify-center mb-6 shadow-lg`}>
                   <Icon className="text-white" size={32} />
@@ -135,8 +135,8 @@ export const MaterialsPage: React.FC = () => {
                 language === 'es' ? 'Entrega oportuna' : 'Timely delivery',
               ].map((item, idx) => (
                 <li key={idx} className="flex items-center space-x-3">
-                  <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                  <div className="w-6 h-6 bg-gray-50 bg-opacity-20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-2 h-2 bg-gray-50 rounded-full"></div>
                   </div>
                   <span>{item}</span>
                 </li>
@@ -144,7 +144,7 @@ export const MaterialsPage: React.FC = () => {
             </ul>
           </div>
 
-          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-100">
+          <div className="bg-gray-50 rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-100">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
               {language === 'es' ? 'Nuestro Compromiso' : 'Our Commitment'}
             </h2>

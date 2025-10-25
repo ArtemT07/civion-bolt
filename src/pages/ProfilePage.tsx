@@ -73,7 +73,7 @@ export const ProfilePage: React.FC = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-red-600 to-blue-600 mx-auto rounded-full"></div>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100">
+        <div className="bg-gray-50 rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100">
           {message && (
             <div className={`mb-6 p-4 rounded-lg ${
               message.includes('Error') || message.includes('error')

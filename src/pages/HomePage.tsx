@@ -40,7 +40,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-block mb-6">
               <div className="bg-gradient-to-r from-red-600 via-white to-blue-600 p-1 rounded-2xl">
-                <div className="bg-white px-6 py-2 rounded-xl">
+                <div className="bg-gray-50 px-6 py-2 rounded-xl">
                   <p className="text-sm font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent">
                     República Dominicana
                   </p>
@@ -69,7 +69,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent"></div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -84,7 +84,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               return (
                 <div
                   key={index}
-                  className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-100"
+                  className="group bg-gray-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-100"
                 >
                   <div className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
                     <Icon className="text-white" size={32} />
@@ -121,7 +121,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-blue-600 rounded-3xl transform rotate-3"></div>
-              <div className="relative bg-white p-8 rounded-3xl shadow-2xl">
+              <div className="relative bg-gray-50 p-8 rounded-3xl shadow-2xl">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="text-center p-6 bg-gradient-to-br from-red-50 to-white rounded-xl">
                     <p className="text-4xl font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent mb-2">20+</p>

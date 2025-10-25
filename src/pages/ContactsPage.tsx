@@ -51,7 +51,7 @@ export const ContactsPage: React.FC = () => {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-100"
+                className="bg-gray-50 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-100"
               >
                 <div className={`w-16 h-16 bg-gradient-to-br ${info.color} rounded-xl flex items-center justify-center mb-6 shadow-lg`}>
                   <Icon className="text-white" size={32} />
@@ -68,7 +68,7 @@ export const ContactsPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100">
+          <div className="bg-gray-50 rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100">
             <h2 className="text-3xl font-bold text-gray-900 mb-8">
               {language === 'es' ? 'Envíanos un Mensaje' : 'Send us a Message'}
             </h2>
@@ -158,7 +158,7 @@ export const ContactsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+            <div className="bg-gray-50 rounded-3xl p-8 shadow-lg border border-gray-100">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
                 {language === 'es' ? 'Ubicación' : 'Location'}
               </h3>

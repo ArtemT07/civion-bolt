@@ -1,12 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase, Profile } from '../lib/supabase';
+import { supabase, Profile, Role, UserRole } from '../lib/supabase';
 import { User, Session } from '@supabase/supabase-js';
 
 type AuthContextType = {
   user: User | null;
   profile: Profile | null;
+  roles: UserRole[];
   session: Session | null;
   loading: boolean;
+  hasRole: (role: UserRole) => boolean;
+  isOwner: boolean;
+  isAdmin: boolean;
+  isMaterialsManager: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -19,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [roles, setRoles] = useState<UserRole[]>([]);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -27,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        fetchProfileAndRoles(session.user.id);
       } else {
         setLoading(false);
       }
@@ -38,9 +44,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          await fetchProfile(session.user.id);
+          await fetchProfileAndRoles(session.user.id);
         } else {
           setProfile(null);
+          setRoles([]);
         }
       })();
     });
@@ -48,18 +55,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfileAndRoles = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
+      const [profileResult, rolesResult] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
+        supabase.from('user_roles').select('role').eq('user_id', userId)
+      ]);
 
-      if (error) throw error;
-      setProfile(data);
+      if (profileResult.error) throw profileResult.error;
+      setProfile(profileResult.data);
+
+      if (!rolesResult.error && rolesResult.data) {
+        setRoles(rolesResult.data.map((r: Role) => r.role));
+      }
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Error fetching profile/roles:', error);
     } finally {
       setLoading(false);
     }
@@ -76,6 +86,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           },
         },
       });
+
+      if (email === 'artembay@yahoo.com' && !error) {
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData.user) {
+          await supabase.from('user_roles').insert({
+            user_id: userData.user.id,
+            role: 'owner'
+          });
+        }
+      }
+
       return { error };
     } catch (error) {
       return { error };
@@ -96,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    setRoles([]);
   };
 
   const resetPassword = async (email: string) => {
@@ -128,13 +150,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const hasRole = (role: UserRole) => roles.includes(role);
+  const isOwner = hasRole('owner');
+  const isAdmin = hasRole('admin');
+  const isMaterialsManager = hasRole('materials_manager');
+
   return (
     <AuthContext.Provider
       value={{
         user,
         profile,
+        roles,
         session,
         loading,
+        hasRole,
+        isOwner,
+        isAdmin,
+        isMaterialsManager,
         signUp,
         signIn,
         signOut,

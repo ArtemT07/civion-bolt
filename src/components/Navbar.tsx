@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { Menu, X, LogOut, Settings, LayoutDashboard, FolderOpen } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AuthModal } from './AuthModal';
@@ -13,7 +13,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, isOwner, isAdmin } = useAuth();
   const { language, setLanguage, t } = useLanguage();
 
   const navItems = [
@@ -32,16 +32,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
 
   return (
     <>
-      <nav className="bg-white shadow-lg sticky top-0 z-40">
+      <nav className="bg-gray-50 shadow-lg sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onNavigate('home')}>
-              <div className="bg-gradient-to-br from-red-600 to-blue-600 p-2 rounded-lg">
-                <Building2 className="text-white" size={32} />
-              </div>
+              <img src="/civion-logo.png" alt="CIVION" className="h-12 w-auto" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Construcción RD</h1>
-                <p className="text-xs text-gray-500">República Dominicana</p>
+                <h1 className="text-xl font-bold text-gray-900">CIVION</h1>
+                <p className="text-xs text-gray-500">{t('heroTitle')}</p>
               </div>
             </div>
 
@@ -50,10 +48,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                 <button
                   key={item.key}
                   onClick={() => onNavigate(item.key)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  className={`px-3 py-2 rounded-lg font-medium text-sm transition-all ${
                     currentPage === item.key
                       ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white shadow-md'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      : 'text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   {item.label}
@@ -67,7 +65,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   onClick={() => setLanguage('es')}
                   className={`px-3 py-1 rounded-md text-sm font-semibold transition-all ${
                     language === 'es'
-                      ? 'bg-white text-red-600 shadow-sm'
+                      ? 'bg-gray-50 text-red-600 shadow-sm'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -77,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   onClick={() => setLanguage('en')}
                   className={`px-3 py-1 rounded-md text-sm font-semibold transition-all ${
                     language === 'en'
-                      ? 'bg-white text-blue-600 shadow-sm'
+                      ? 'bg-gray-50 text-blue-600 shadow-sm'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -103,11 +101,33 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   </button>
 
                   {isProfileMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100">
+                    <div className="absolute right-0 mt-2 w-56 bg-gray-50 rounded-lg shadow-xl py-2 border border-gray-100">
                       <div className="px-4 py-3 border-b border-gray-100">
                         <p className="text-sm font-semibold text-gray-900">{profile?.full_name}</p>
                         <p className="text-xs text-gray-500 truncate">{profile?.email}</p>
                       </div>
+                      {(isOwner || isAdmin) && (
+                        <button
+                          onClick={() => {
+                            onNavigate('dashboard');
+                            setIsProfileMenuOpen(false);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
+                        >
+                          <LayoutDashboard size={16} />
+                          <span>{t('dashboard')}</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          onNavigate('projects');
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
+                      >
+                        <FolderOpen size={16} />
+                        <span>{t('myProjects')}</span>
+                      </button>
                       <button
                         onClick={() => {
                           onNavigate('profile');
@@ -148,7 +168,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="md:hidden bg-gray-50 border-t border-gray-200">
             <div className="px-4 py-3 space-y-2">
               {navItems.map((item) => (
                 <button
@@ -172,7 +192,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   onClick={() => setLanguage('es')}
                   className={`flex-1 py-2 rounded-md text-sm font-semibold transition-all ${
                     language === 'es'
-                      ? 'bg-white text-red-600 shadow-sm'
+                      ? 'bg-gray-50 text-red-600 shadow-sm'
                       : 'text-gray-600'
                   }`}
                 >
@@ -182,7 +202,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                   onClick={() => setLanguage('en')}
                   className={`flex-1 py-2 rounded-md text-sm font-semibold transition-all ${
                     language === 'en'
-                      ? 'bg-white text-blue-600 shadow-sm'
+                      ? 'bg-gray-50 text-blue-600 shadow-sm'
                       : 'text-gray-600'
                   }`}
                 >
