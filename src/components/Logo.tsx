@@ -7,7 +7,7 @@ type LogoProps = {
 export const Logo: React.FC<LogoProps> = ({ className = "h-12" }) => {
   return (
     <img
-      src="/civion-logo.svg"
+      src="/civion-logo copy.svg"
       alt="Civion Logo"
       className={className}
     />
