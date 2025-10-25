@@ -155,7 +155,14 @@ export const CalculatorPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-16">
+    <div className="min-h-screen relative py-16">
+      <div className="absolute inset-0 -z-10">
+        <img
+          src="https://images.pexels.com/photos/3862630/pexels-photo-3862630.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          alt="Calculator background"
+          className="w-full h-full object-cover opacity-10"
+        />
+      </div>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-red-600 to-blue-600 rounded-2xl mb-6 shadow-lg">

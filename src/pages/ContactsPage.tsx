@@ -33,7 +33,14 @@ export const ContactsPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-16">
+    <div className="min-h-screen relative py-16">
+      <div className="absolute inset-0 -z-10">
+        <img
+          src="https://images.pexels.com/photos/416405/pexels-photo-416405.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          alt="Office background"
+          className="w-full h-full object-cover opacity-5"
+        />
+      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
@@ -158,16 +165,20 @@ export const ContactsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-3xl p-8 shadow-lg border border-gray-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                {language === 'es' ? 'Ubicación' : 'Location'}
-              </h3>
-              <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
-                <MapPin className="text-gray-400" size={48} />
+            <div className="bg-gray-50 rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+              <img
+                src="https://images.pexels.com/photos/2219024/pexels-photo-2219024.jpeg?auto=compress&cs=tinysrgb&w=800"
+                alt="Office location"
+                className="w-full h-64 object-cover"
+              />
+              <div className="p-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  {language === 'es' ? 'Nuestra Oficina' : 'Our Office'}
+                </h3>
+                <p className="text-gray-600">
+                  Santo Domingo, República Dominicana
+                </p>
               </div>
-              <p className="text-sm text-gray-500 mt-4 text-center">
-                Santo Domingo, República Dominicana
-              </p>
             </div>
           </div>
         </div>

@@ -75,7 +75,14 @@ export const MaterialsPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-16">
+    <div className="min-h-screen relative py-16">
+      <div className="absolute inset-0 -z-10">
+        <img
+          src="https://images.pexels.com/photos/1249611/pexels-photo-1249611.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          alt="Construction materials background"
+          className="w-full h-full object-cover opacity-5"
+        />
+      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">

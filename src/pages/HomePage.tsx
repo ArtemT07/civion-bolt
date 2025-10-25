@@ -34,8 +34,15 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen">
-      <section className="relative bg-gradient-to-br from-gray-50 via-white to-gray-50 py-20 md:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      <section className="relative py-20 md:py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.pexels.com/photos/2219024/pexels-photo-2219024.jpeg?auto=compress&cs=tinysrgb&w=1920"
+            alt="Construction background"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/90 to-white/85"></div>
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-block mb-6">
@@ -119,27 +126,27 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               </button>
             </div>
 
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-blue-600 rounded-3xl transform rotate-3"></div>
-              <div className="relative bg-gray-50 p-8 rounded-3xl shadow-2xl">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center p-6 bg-gradient-to-br from-red-50 to-white rounded-xl">
-                    <p className="text-4xl font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent mb-2">20+</p>
-                    <p className="text-sm text-gray-600 font-medium">Años</p>
-                  </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-white rounded-xl">
-                    <p className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-red-600 bg-clip-text text-transparent mb-2">500+</p>
-                    <p className="text-sm text-gray-600 font-medium">Proyectos</p>
-                  </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-white rounded-xl">
-                    <p className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-red-600 bg-clip-text text-transparent mb-2">100%</p>
-                    <p className="text-sm text-gray-600 font-medium">Calidad</p>
-                  </div>
-                  <div className="text-center p-6 bg-gradient-to-br from-red-50 to-white rounded-xl">
-                    <p className="text-4xl font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent mb-2">24/7</p>
-                    <p className="text-sm text-gray-600 font-medium">Soporte</p>
-                  </div>
-                </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="relative overflow-hidden rounded-2xl shadow-xl transform transition-transform hover:scale-105">
+                <img
+                  src="https://images.pexels.com/photos/3862132/pexels-photo-3862132.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  alt="Construction workers"
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="relative overflow-hidden rounded-2xl shadow-xl transform transition-transform hover:scale-105">
+                <img
+                  src="https://images.pexels.com/photos/1216589/pexels-photo-1216589.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  alt="Building construction"
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+              <div className="col-span-2 relative overflow-hidden rounded-2xl shadow-xl transform transition-transform hover:scale-105">
+                <img
+                  src="https://images.pexels.com/photos/585419/pexels-photo-585419.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  alt="Modern building"
+                  className="w-full h-48 object-cover"
+                />
               </div>
             </div>
           </div>
