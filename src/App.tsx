@@ -8,6 +8,8 @@ import { CalculatorPage } from './pages/CalculatorPage';
 import { ContactsPage } from './pages/ContactsPage';
 import { MaterialsPage } from './pages/MaterialsPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { DashboardPage } from './pages/DashboardPage';
+import { UserManagementPage } from './pages/UserManagementPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -26,6 +28,10 @@ function App() {
         return <MaterialsPage />;
       case 'profile':
         return <ProfilePage />;
+      case 'dashboard':
+        return <DashboardPage />;
+      case 'users':
+        return <UserManagementPage />;
       default:
         return <HomePage onNavigate={setCurrentPage} />;
     }
@@ -34,7 +40,7 @@ function App() {
   return (
     <AuthProvider>
       <LanguageProvider>
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen" style={{ backgroundColor: '#F7F8FA' }}>
           <Navbar currentPage={currentPage} onNavigate={setCurrentPage} />
           <main>{renderPage()}</main>
         </div>

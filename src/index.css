@@ -4,7 +4,8 @@
 
 @layer base {
   body {
-    @apply bg-gray-100;
+    background-color: #F7F8FA;
+    color: #1E293B;
   }
 }
 
