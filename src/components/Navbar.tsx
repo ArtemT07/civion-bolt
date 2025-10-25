@@ -3,6 +3,7 @@ import { Menu, X, LogOut, Settings, LayoutDashboard, FolderOpen } from 'lucide-r
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AuthModal } from './AuthModal';
+import { Logo } from './Logo';
 
 type NavbarProps = {
   currentPage: string;
@@ -36,10 +37,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onNavigate('home')}>
-              <img src="/civion-logo.png" alt="CIVION" className="h-12 w-auto" />
+              <Logo className="h-14 w-14" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">CIVION</h1>
-                <p className="text-xs text-gray-500">{t('heroTitle')}</p>
+                <h1 className="text-2xl font-bold text-gray-900">CIVION</h1>
+                <p className="text-xs text-gray-600">{t('heroTitle')}</p>
               </div>
             </div>
 
