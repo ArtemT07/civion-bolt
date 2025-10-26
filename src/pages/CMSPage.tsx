@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FileText, Plus, Edit2, Trash2, Image, Save, X, Upload, Eye, EyeOff, Settings, Palette, Type, Layout } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { supabase } from '../lib/supabase';
 
 type CMSPage = {
@@ -30,9 +31,14 @@ type SiteSettings = {
   buttons: { defaultSize: string; borderRadius: number; sizes: any };
 };
 
-export const CMSPage: React.FC = () => {
+type CMSPageProps = {
+  onNavigate?: (page: string) => void;
+};
+
+export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
   const { isOwner, user } = useAuth();
   const { t, language } = useLanguage();
+  const { reloadTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'pages' | 'design'>('pages');
   const [pages, setPages] = useState<CMSPage[]>([]);
   const [selectedPage, setSelectedPage] = useState<CMSPage | null>(null);
@@ -105,7 +111,8 @@ export const CMSPage: React.FC = () => {
       if (error) throw error;
 
       await loadSiteSettings();
-      alert('Configuración actualizada');
+      await reloadTheme();
+      alert('✅ Configuración actualizada. Recargue la página para ver los cambios.');
     } catch (error) {
       console.error('Error updating setting:', error);
       alert('Error actualizando configuración');
@@ -389,6 +396,7 @@ export const CMSPage: React.FC = () => {
                           openPageModal(page);
                         }}
                         className="text-blue-600 hover:text-blue-700 p-1"
+                        title="Editar"
                       >
                         <Edit2 size={16} />
                       </button>
@@ -398,17 +406,29 @@ export const CMSPage: React.FC = () => {
                           deletePage(page.id);
                         }}
                         className="text-red-600 hover:text-red-700 p-1"
+                        title="Eliminar"
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
                   <p className="text-xs text-gray-500">/{page.slug}</p>
-                  <div className="mt-2">
+                  <div className="mt-2 flex items-center justify-between">
                     {page.is_active ? (
                       <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Activa</span>
                     ) : (
                       <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">Inactiva</span>
+                    )}
+                    {page.is_active && onNavigate && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onNavigate(`cms-${page.slug}`);
+                        }}
+                        className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                      >
+                        Ver Página →
+                      </button>
                     )}
                   </div>
                 </div>

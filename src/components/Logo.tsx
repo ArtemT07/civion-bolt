@@ -1,14 +1,31 @@
 import React from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 type LogoProps = {
   className?: string;
 };
 
-export const Logo: React.FC<LogoProps> = ({ className = "h-12" }) => {
+export const Logo: React.FC<LogoProps> = ({ className }) => {
+  const { theme } = useTheme();
+
+  if (!theme) {
+    return (
+      <img
+        src="/civion-logo.svg"
+        alt="Civion Logo"
+        className={className || "h-12"}
+      />
+    );
+  }
+
   return (
     <img
-      src="/civion-logo copy.svg"
+      src={theme.logo.url}
       alt="Civion Logo"
+      style={{
+        width: theme.logo.width,
+        height: theme.logo.height,
+      }}
       className={className}
     />
   );

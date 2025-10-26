@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
@@ -13,6 +14,7 @@ import { UserManagementPage } from './pages/UserManagementPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { MaterialsManagementPage } from './pages/MaterialsManagementPage';
 import { CMSPage } from './pages/CMSPage';
+import { DynamicCMSPage } from './pages/DynamicCMSPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -40,8 +42,12 @@ function App() {
       case 'materials-management':
         return <MaterialsManagementPage />;
       case 'cms':
-        return <CMSPage />;
+        return <CMSPage onNavigate={setCurrentPage} />;
       default:
+        if (currentPage.startsWith('cms-')) {
+          const slug = currentPage.replace('cms-', '');
+          return <DynamicCMSPage slug={slug} />;
+        }
         return <HomePage onNavigate={setCurrentPage} />;
     }
   };
@@ -49,10 +55,12 @@ function App() {
   return (
     <AuthProvider>
       <LanguageProvider>
-        <div className="min-h-screen">
-          <Navbar currentPage={currentPage} onNavigate={setCurrentPage} />
-          <main>{renderPage()}</main>
-        </div>
+        <ThemeProvider>
+          <div className="min-h-screen">
+            <Navbar currentPage={currentPage} onNavigate={setCurrentPage} />
+            <main>{renderPage()}</main>
+          </div>
+        </ThemeProvider>
       </LanguageProvider>
     </AuthProvider>
   );
