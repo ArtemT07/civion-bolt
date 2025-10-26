@@ -302,9 +302,16 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
   if (!isOwner) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
-        <div className="text-center">
+        <div className="text-center max-w-2xl p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Acceso Denegado</h2>
-          <p className="text-gray-600">Solo el propietario puede acceder al CMS</p>
+          <p className="text-gray-600 mb-4">Solo el propietario puede acceder al CMS</p>
+          <div className="bg-gray-100 p-4 rounded-lg text-left text-sm">
+            <p className="font-semibold mb-2">Información de diagnóstico:</p>
+            <p>Email: {user?.email || 'No autenticado'}</p>
+            <p>Roles: {roles.length > 0 ? roles.join(', ') : 'Sin roles'}</p>
+            <p>isOwner: {isOwner ? 'Sí' : 'No'}</p>
+            <p>isAdmin: {isAdmin ? 'Sí' : 'No'}</p>
+          </div>
         </div>
       </div>
     );
@@ -328,6 +335,7 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
               <span>Sistema CMS</span>
             </h1>
             <p className="text-gray-600 mt-1">Gestión completa de contenido y diseño del sitio web</p>
+            <p className="text-xs text-gray-400 mt-1">Usuario: {user?.email} | v2.0 WordPress-style</p>
           </div>
         </div>
 
