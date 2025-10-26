@@ -6,9 +6,9 @@ type LogoProps = {
 };
 
 export const Logo: React.FC<LogoProps> = ({ className }) => {
-  const { theme } = useTheme();
+  const { theme, loading } = useTheme();
 
-  if (!theme) {
+  if (loading || !theme) {
     return (
       <img
         src="/civion-logo.svg"

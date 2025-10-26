@@ -19,7 +19,7 @@ type DynamicCMSPageProps = {
 
 export const DynamicCMSPage: React.FC<DynamicCMSPageProps> = ({ slug }) => {
   const { language } = useLanguage();
-  const { theme } = useTheme();
+  const { theme, loading: themeLoading } = useTheme();
   const [sections, setSections] = useState<CMSSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [pageTitle, setPageTitle] = useState('');
@@ -175,7 +175,7 @@ export const DynamicCMSPage: React.FC<DynamicCMSPageProps> = ({ slug }) => {
     }
   };
 
-  if (loading) {
+  if (loading || themeLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
