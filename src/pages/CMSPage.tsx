@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { FileText, Plus, Edit2, Trash2, Image, Save, X, Upload, Eye, EyeOff, Settings, Palette, Type, Layout } from 'lucide-react';
+import { FileText, Plus, Edit2, Trash2, Image, Save, X, Upload, Eye, EyeOff, Settings, Palette, Type, Layout, Menu as MenuIcon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { supabase } from '../lib/supabase';
+import { MediaLibrary } from '../components/MediaLibrary';
+import { NavigationManager } from '../components/NavigationManager';
 
 type CMSPage = {
   id: string;
@@ -39,7 +41,7 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
   const { isOwner, user } = useAuth();
   const { t, language } = useLanguage();
   const { reloadTheme } = useTheme();
-  const [activeTab, setActiveTab] = useState<'pages' | 'design'>('pages');
+  const [activeTab, setActiveTab] = useState<'pages' | 'design' | 'media'>('pages');
   const [pages, setPages] = useState<CMSPage[]>([]);
   const [selectedPage, setSelectedPage] = useState<CMSPage | null>(null);
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
@@ -363,6 +365,17 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
             >
               <Palette size={20} />
               <span>Diseño Global</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('media')}
+              className={`px-6 py-3 font-semibold transition-colors flex items-center space-x-2 border-b-2 ${
+                activeTab === 'media'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <MenuIcon size={20} />
+              <span>Medios y Navegación</span>
             </button>
           </div>
         </div>
@@ -940,6 +953,14 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Media and Navigation Tab */}
+      {activeTab === 'media' && (
+        <div className="space-y-6">
+          <MediaLibrary />
+          <NavigationManager />
         </div>
       )}
     </div>

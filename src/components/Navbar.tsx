@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, LogOut, Settings, LayoutDashboard, FolderOpen, User, Package } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { AuthModal } from './AuthModal';
 import { Logo } from './Logo';
+import { supabase } from '../lib/supabase';
+
+type NavItem = {
+  id: string;
+  label_es: string;
+  label_en: string;
+  link_type: string;
+  link_value: string;
+  order: number;
+};
 
 type NavbarProps = {
   currentPage: string;
@@ -14,23 +24,29 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [navItems, setNavItems] = useState<NavItem[]>([]);
   const { user, profile, signOut, isOwner, isAdmin, isMaterialsManager } = useAuth();
   const { language, setLanguage, t } = useLanguage();
 
-  const navItems = user
-    ? [
-        { key: 'about', label: t('about') },
-        { key: 'calculator', label: t('calculator') },
-        { key: 'contacts', label: t('contacts') },
-        { key: 'materials', label: t('materials') },
-      ]
-    : [
-        { key: 'home', label: t('home') },
-        { key: 'about', label: t('about') },
-        { key: 'calculator', label: t('calculator') },
-        { key: 'contacts', label: t('contacts') },
-        { key: 'materials', label: t('materials') },
-      ];
+  useEffect(() => {
+    loadNavigation();
+  }, []);
+
+  const loadNavigation = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('navigation_items')
+        .select('*')
+        .is('parent_id', null)
+        .eq('is_active', true)
+        .order('order');
+
+      if (error) throw error;
+      setNavItems(data || []);
+    } catch (error) {
+      console.error('Error loading navigation:', error);
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -48,19 +64,31 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
             </div>
 
             <div className="hidden md:flex items-center space-x-1">
-              {navItems.map((item) => (
-                <button
-                  key={item.key}
-                  onClick={() => onNavigate(item.key)}
-                  className={`px-3 py-2 rounded-lg font-medium text-sm transition-all ${
-                    currentPage === item.key
-                      ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white shadow-md'
-                      : 'text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
+              {navItems.map((item) => {
+                const label = language === 'es' ? item.label_es : item.label_en;
+                const isActive = currentPage === item.link_value.replace('/', '');
+
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (item.link_type === 'internal') {
+                        const page = item.link_value === '/' ? 'home' : item.link_value.replace('/', '');
+                        onNavigate(page);
+                      } else if (item.link_type === 'external') {
+                        window.open(item.link_value, '_blank');
+                      }
+                    }}
+                    className={`px-3 py-2 rounded-lg font-medium text-sm transition-all ${
+                      isActive
+                        ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white shadow-md'
+                        : 'text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
@@ -198,22 +226,32 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
         {isMenuOpen && (
           <div className="md:hidden bg-gray-50 border-t border-gray-200">
             <div className="px-4 py-3 space-y-2">
-              {navItems.map((item) => (
-                <button
-                  key={item.key}
-                  onClick={() => {
-                    onNavigate(item.key);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`block w-full text-left px-4 py-3 rounded-lg font-medium transition-all ${
-                    currentPage === item.key
-                      ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
+              {navItems.map((item) => {
+                const label = language === 'es' ? item.label_es : item.label_en;
+                const isActive = currentPage === item.link_value.replace('/', '');
+
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (item.link_type === 'internal') {
+                        const page = item.link_value === '/' ? 'home' : item.link_value.replace('/', '');
+                        onNavigate(page);
+                      } else if (item.link_type === 'external') {
+                        window.open(item.link_value, '_blank');
+                      }
+                      setIsMenuOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-3 rounded-lg font-medium transition-all ${
+                      isActive
+                        ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
 
               <div className="flex items-center justify-center space-x-2 bg-gray-100 rounded-lg p-1 my-3">
                 <button
