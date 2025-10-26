@@ -287,6 +287,23 @@ export const MaterialsManagementPage: React.FC = () => {
     }
   };
 
+  const deleteCategory = async (categoryId: string) => {
+    if (!confirm(t('confirmDelete'))) return;
+
+    try {
+      const { error } = await supabase
+        .from('material_categories')
+        .delete()
+        .eq('id', categoryId);
+
+      if (error) throw error;
+      await loadData();
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      alert(t('errorDeletingCategory'));
+    }
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-DO', {
       style: 'currency',
@@ -349,6 +366,36 @@ export const MaterialsManagementPage: React.FC = () => {
           </div>
           <p className="text-gray-600">{t('manageMaterialsAndPrices')}</p>
         </div>
+
+        {/* Categories Management */}
+        {canManageCategories && (
+          <div className="mb-8 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('categories')}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {categories.map((cat) => (
+                <div key={cat.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <span className="text-sm font-medium text-gray-900 flex-1">
+                    {language === 'es' ? cat.name_es : cat.name_en}
+                  </span>
+                  <div className="flex space-x-1 ml-2">
+                    <button
+                      onClick={() => openCategoryModal(cat)}
+                      className="text-blue-600 hover:text-blue-700 transition-colors p-1"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      onClick={() => deleteCategory(cat.id)}
+                      className="text-red-600 hover:text-red-700 transition-colors p-1"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">

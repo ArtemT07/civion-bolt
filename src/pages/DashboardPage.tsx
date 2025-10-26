@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Calculator, Mail, TrendingUp, BarChart3, Activity } from 'lucide-react';
+import { Users, Calculator, Mail, TrendingUp, BarChart3, Activity, FileText } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -12,7 +12,11 @@ type AnalyticsData = {
   totalUsers: number;
 };
 
-export const DashboardPage: React.FC = () => {
+type DashboardPageProps = {
+  onNavigate: (page: string) => void;
+};
+
+export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const { isOwner, isAdmin } = useAuth();
   const { t } = useLanguage();
   const [analytics, setAnalytics] = useState<AnalyticsData>({
@@ -156,6 +160,26 @@ export const DashboardPage: React.FC = () => {
             </div>
           ))}
         </div>
+
+        {/* CMS Management for Owner */}
+        {isOwner && (
+          <div className="mb-8">
+            <div
+              onClick={() => onNavigate('cms')}
+              className="bg-gradient-to-r from-red-600 to-blue-600 rounded-xl shadow-lg hover:shadow-xl transition-all p-8 cursor-pointer transform hover:scale-105"
+            >
+              <div className="flex items-center space-x-4 text-white">
+                <div className="bg-white/20 p-4 rounded-xl">
+                  <FileText size={32} />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold mb-1">Sistema CMS</h3>
+                  <p className="text-white/90">Administrar contenido del sitio web - Páginas, Textos e Imágenes</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Chart Placeholder */}
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">

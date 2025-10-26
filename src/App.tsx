@@ -12,6 +12,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { UserManagementPage } from './pages/UserManagementPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { MaterialsManagementPage } from './pages/MaterialsManagementPage';
+import { CMSPage } from './pages/CMSPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -31,13 +32,15 @@ function App() {
       case 'profile':
         return <ProfilePage />;
       case 'dashboard':
-        return <DashboardPage />;
+        return <DashboardPage onNavigate={setCurrentPage} />;
       case 'users':
         return <UserManagementPage />;
       case 'projects':
         return <ProjectsPage />;
       case 'materials-management':
         return <MaterialsManagementPage />;
+      case 'cms':
+        return <CMSPage />;
       default:
         return <HomePage onNavigate={setCurrentPage} />;
     }

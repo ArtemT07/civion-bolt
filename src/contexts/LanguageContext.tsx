@@ -190,6 +190,8 @@ const translations = {
     errorSavingMaterial: 'Error guardando material',
     errorDeletingMaterial: 'Error eliminando material',
     errorSavingCategory: 'Error guardando categoría',
+    errorDeletingCategory: 'Error eliminando categoría',
+    categories: 'Categorías',
   },
   en: {
     home: 'Home',
@@ -371,6 +373,8 @@ const translations = {
     errorSavingMaterial: 'Error saving material',
     errorDeletingMaterial: 'Error deleting material',
     errorSavingCategory: 'Error saving category',
+    errorDeletingCategory: 'Error deleting category',
+    categories: 'Categories',
   },
 };
 
