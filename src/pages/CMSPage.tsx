@@ -6,6 +6,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { supabase } from '../lib/supabase';
 import { MediaLibrary } from '../components/MediaLibrary';
 import { NavigationManager } from '../components/NavigationManager';
+import { ImagePicker } from '../components/ImagePicker';
 
 type CMSPage = {
   id: string;
@@ -45,6 +46,8 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
   const [pages, setPages] = useState<CMSPage[]>([]);
   const [selectedPage, setSelectedPage] = useState<CMSPage | null>(null);
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [editedSettings, setEditedSettings] = useState<SiteSettings | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [sections, setSections] = useState<CMSSection[]>([]);
   const [showPageModal, setShowPageModal] = useState(false);
   const [showSectionModal, setShowSectionModal] = useState(false);
@@ -94,30 +97,46 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
       });
 
       setSiteSettings(settings);
+      setEditedSettings(settings);
+      setHasUnsavedChanges(false);
     } catch (error) {
       console.error('Error loading site settings:', error);
     }
   };
 
-  const updateSiteSetting = async (key: string, value: any) => {
-    try {
-      const { error } = await supabase
-        .from('site_settings')
-        .update({
-          setting_value: value,
-          updated_at: new Date().toISOString(),
-          updated_by: user?.id,
-        })
-        .eq('setting_key', key);
+  const updateLocalSetting = (key: string, value: any) => {
+    if (editedSettings) {
+      setEditedSettings({ ...editedSettings, [key]: value });
+      setHasUnsavedChanges(true);
+    }
+  };
 
-      if (error) throw error;
+  const saveSiteSettings = async () => {
+    if (!editedSettings) return;
+
+    try {
+      const updates = Object.keys(editedSettings).map(async (key) => {
+        return supabase
+          .from('site_settings')
+          .update({
+            setting_value: editedSettings[key],
+            updated_at: new Date().toISOString(),
+            updated_by: user?.id,
+          })
+          .eq('setting_key', key);
+      });
+
+      const results = await Promise.all(updates);
+      const errors = results.filter(r => r.error);
+
+      if (errors.length > 0) throw errors[0].error;
 
       await loadSiteSettings();
       await reloadTheme();
-      alert('✅ Configuración actualizada. Recargue la página para ver los cambios.');
+      alert('✅ Cambios guardados exitosamente');
     } catch (error) {
-      console.error('Error updating setting:', error);
-      alert('Error actualizando configuración');
+      console.error('Error saving settings:', error);
+      alert('Error guardando cambios');
     }
   };
 
@@ -515,8 +534,22 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
         )}
 
         {/* Design Tab Content */}
-        {activeTab === 'design' && siteSettings && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {activeTab === 'design' && editedSettings && (
+          <div className="space-y-6">
+            {hasUnsavedChanges && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center justify-between">
+                <p className="text-yellow-800 font-medium">Tienes cambios sin guardar</p>
+                <button
+                  onClick={saveSiteSettings}
+                  className="bg-gradient-to-r from-red-600 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-red-700 hover:to-blue-700 transition-all flex items-center space-x-2"
+                >
+                  <Save size={18} />
+                  <span>Guardar Cambios</span>
+                </button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Logo Settings */}
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
@@ -528,10 +561,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">URL del Logo</label>
                   <input
                     type="text"
-                    value={siteSettings.logo.url}
+                    value={editedSettings.logo.url}
                     onChange={(e) => {
-                      const newSettings = { ...siteSettings.logo, url: e.target.value };
-                      updateSiteSetting('logo', newSettings);
+                      const newSettings = { ...editedSettings.logo, url: e.target.value };
+                      updateLocalSetting('logo', newSettings);
                     }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   />
@@ -541,10 +574,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Ancho (px)</label>
                     <input
                       type="number"
-                      value={siteSettings.logo.width}
+                      value={editedSettings.logo.width}
                       onChange={(e) => {
-                        const newSettings = { ...siteSettings.logo, width: parseInt(e.target.value) };
-                        updateSiteSetting('logo', newSettings);
+                        const newSettings = { ...editedSettings.logo, width: parseInt(e.target.value) };
+                        updateLocalSetting('logo', newSettings);
                       }}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                     />
@@ -553,10 +586,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Alto (px)</label>
                     <input
                       type="number"
-                      value={siteSettings.logo.height}
+                      value={editedSettings.logo.height}
                       onChange={(e) => {
-                        const newSettings = { ...siteSettings.logo, height: parseInt(e.target.value) };
-                        updateSiteSetting('logo', newSettings);
+                        const newSettings = { ...editedSettings.logo, height: parseInt(e.target.value) };
+                        updateLocalSetting('logo', newSettings);
                       }}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                     />
@@ -565,10 +598,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Posición</label>
                   <select
-                    value={siteSettings.logo.position}
+                    value={editedSettings.logo.position}
                     onChange={(e) => {
-                      const newSettings = { ...siteSettings.logo, position: e.target.value };
-                      updateSiteSetting('logo', newSettings);
+                      const newSettings = { ...editedSettings.logo, position: e.target.value };
+                      updateLocalSetting('logo', newSettings);
                     }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   >
@@ -580,9 +613,9 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                 <div className="pt-4 border-t">
                   <p className="text-sm text-gray-600 mb-2">Vista previa:</p>
                   <img
-                    src={siteSettings.logo.url}
+                    src={editedSettings.logo.url}
                     alt="Logo preview"
-                    style={{ width: siteSettings.logo.width, height: siteSettings.logo.height }}
+                    style={{ width: editedSettings.logo.width, height: editedSettings.logo.height }}
                     className="border border-gray-200 rounded"
                   />
                 </div>
@@ -600,10 +633,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Color Primario (Inicio)</label>
                   <input
                     type="color"
-                    value={siteSettings.colors.primary.from}
+                    value={editedSettings.colors.primary.from}
                     onChange={(e) => {
-                      const newSettings = { ...siteSettings.colors, primary: { ...siteSettings.colors.primary, from: e.target.value } };
-                      updateSiteSetting('colors', newSettings);
+                      const newSettings = { ...editedSettings.colors, primary: { ...editedSettings.colors.primary, from: e.target.value } };
+                      updateLocalSetting('colors', newSettings);
                     }}
                     className="w-full h-12 rounded-lg"
                   />
@@ -612,10 +645,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Color Primario (Fin)</label>
                   <input
                     type="color"
-                    value={siteSettings.colors.primary.to}
+                    value={editedSettings.colors.primary.to}
                     onChange={(e) => {
-                      const newSettings = { ...siteSettings.colors, primary: { ...siteSettings.colors.primary, to: e.target.value } };
-                      updateSiteSetting('colors', newSettings);
+                      const newSettings = { ...editedSettings.colors, primary: { ...editedSettings.colors.primary, to: e.target.value } };
+                      updateLocalSetting('colors', newSettings);
                     }}
                     className="w-full h-12 rounded-lg"
                   />
@@ -624,10 +657,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Color de Texto</label>
                   <input
                     type="color"
-                    value={siteSettings.colors.text}
+                    value={editedSettings.colors.text}
                     onChange={(e) => {
-                      const newSettings = { ...siteSettings.colors, text: e.target.value };
-                      updateSiteSetting('colors', newSettings);
+                      const newSettings = { ...editedSettings.colors, text: e.target.value };
+                      updateLocalSetting('colors', newSettings);
                     }}
                     className="w-full h-12 rounded-lg"
                   />
@@ -637,7 +670,7 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                   <div
                     className="h-16 rounded-lg"
                     style={{
-                      background: `linear-gradient(to right, ${siteSettings.colors.primary.from}, ${siteSettings.colors.primary.to})`
+                      background: `linear-gradient(to right, ${editedSettings.colors.primary.from}, ${editedSettings.colors.primary.to})`
                     }}
                   ></div>
                 </div>
@@ -654,10 +687,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Fuente de Encabezados</label>
                   <select
-                    value={siteSettings.fonts.heading}
+                    value={editedSettings.fonts.heading}
                     onChange={(e) => {
-                      const newSettings = { ...siteSettings.fonts, heading: e.target.value };
-                      updateSiteSetting('fonts', newSettings);
+                      const newSettings = { ...editedSettings.fonts, heading: e.target.value };
+                      updateLocalSetting('fonts', newSettings);
                     }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   >
@@ -671,10 +704,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Fuente del Cuerpo</label>
                   <select
-                    value={siteSettings.fonts.body}
+                    value={editedSettings.fonts.body}
                     onChange={(e) => {
-                      const newSettings = { ...siteSettings.fonts, body: e.target.value };
-                      updateSiteSetting('fonts', newSettings);
+                      const newSettings = { ...editedSettings.fonts, body: e.target.value };
+                      updateLocalSetting('fonts', newSettings);
                     }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   >
@@ -698,10 +731,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Tamaño por Defecto</label>
                   <select
-                    value={siteSettings.buttons.defaultSize}
+                    value={editedSettings.buttons.defaultSize}
                     onChange={(e) => {
-                      const newSettings = { ...siteSettings.buttons, defaultSize: e.target.value };
-                      updateSiteSetting('buttons', newSettings);
+                      const newSettings = { ...editedSettings.buttons, defaultSize: e.target.value };
+                      updateLocalSetting('buttons', newSettings);
                     }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   >
@@ -714,10 +747,10 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Radio de Bordes (px)</label>
                   <input
                     type="number"
-                    value={siteSettings.buttons.borderRadius}
+                    value={editedSettings.buttons.borderRadius}
                     onChange={(e) => {
-                      const newSettings = { ...siteSettings.buttons, borderRadius: parseInt(e.target.value) };
-                      updateSiteSetting('buttons', newSettings);
+                      const newSettings = { ...editedSettings.buttons, borderRadius: parseInt(e.target.value) };
+                      updateLocalSetting('buttons', newSettings);
                     }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   />
@@ -726,8 +759,8 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                   <p className="text-sm text-gray-600 mb-2">Vista previa:</p>
                   <button
                     style={{
-                      borderRadius: `${siteSettings.buttons.borderRadius}px`,
-                      background: `linear-gradient(to right, ${siteSettings.colors.primary.from}, ${siteSettings.colors.primary.to})`
+                      borderRadius: `${editedSettings.buttons.borderRadius}px`,
+                      background: `linear-gradient(to right, ${editedSettings.colors.primary.from}, ${editedSettings.colors.primary.to})`
                     }}
                     className="text-white px-6 py-3 font-semibold"
                   >
@@ -735,6 +768,7 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                   </button>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         )}
@@ -876,15 +910,13 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                     })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   />
-                  <input
-                    type="text"
-                    placeholder="URL de Imagen"
+                  <ImagePicker
+                    label="Imagen"
                     value={sectionForm.content_es.image_url || ''}
-                    onChange={(e) => setSectionForm({
+                    onChange={(url) => setSectionForm({
                       ...sectionForm,
-                      content_es: {...sectionForm.content_es, image_url: e.target.value}
+                      content_es: {...sectionForm.content_es, image_url: url}
                     })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
               </div>
@@ -912,15 +944,13 @@ export const CMSPage: React.FC<CMSPageProps> = ({ onNavigate }) => {
                     })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   />
-                  <input
-                    type="text"
-                    placeholder="Image URL"
+                  <ImagePicker
+                    label="Image"
                     value={sectionForm.content_en.image_url || ''}
-                    onChange={(e) => setSectionForm({
+                    onChange={(url) => setSectionForm({
                       ...sectionForm,
-                      content_en: {...sectionForm.content_en, image_url: e.target.value}
+                      content_en: {...sectionForm.content_en, image_url: url}
                     })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
               </div>
