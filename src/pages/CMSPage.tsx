@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FileText, Plus, Edit2, Trash2, Image, Save, X, Upload, Eye, EyeOff } from 'lucide-react';
+import { FileText, Plus, Edit2, Trash2, Image, Save, X, Upload, Eye, EyeOff, Settings, Palette, Type, Layout } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
@@ -23,11 +23,20 @@ type CMSSection = {
   is_active: boolean;
 };
 
+type SiteSettings = {
+  logo: { url: string; width: number; height: number; position: string };
+  fonts: { heading: string; body: string; sizes: any };
+  colors: { primary: { from: string; to: string }; secondary: string; text: string; textLight: string };
+  buttons: { defaultSize: string; borderRadius: number; sizes: any };
+};
+
 export const CMSPage: React.FC = () => {
   const { isOwner, user } = useAuth();
   const { t, language } = useLanguage();
+  const [activeTab, setActiveTab] = useState<'pages' | 'design'>('pages');
   const [pages, setPages] = useState<CMSPage[]>([]);
   const [selectedPage, setSelectedPage] = useState<CMSPage | null>(null);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [sections, setSections] = useState<CMSSection[]>([]);
   const [showPageModal, setShowPageModal] = useState(false);
   const [showSectionModal, setShowSectionModal] = useState(false);
@@ -53,6 +62,7 @@ export const CMSPage: React.FC = () => {
   useEffect(() => {
     if (isOwner) {
       loadPages();
+      loadSiteSettings();
     }
   }, [isOwner]);
 
@@ -61,6 +71,46 @@ export const CMSPage: React.FC = () => {
       loadSections(selectedPage.id);
     }
   }, [selectedPage]);
+
+  const loadSiteSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('*');
+
+      if (error) throw error;
+
+      const settings: any = {};
+      data?.forEach((setting) => {
+        settings[setting.setting_key] = setting.setting_value;
+      });
+
+      setSiteSettings(settings);
+    } catch (error) {
+      console.error('Error loading site settings:', error);
+    }
+  };
+
+  const updateSiteSetting = async (key: string, value: any) => {
+    try {
+      const { error } = await supabase
+        .from('site_settings')
+        .update({
+          setting_value: value,
+          updated_at: new Date().toISOString(),
+          updated_by: user?.id,
+        })
+        .eq('setting_key', key);
+
+      if (error) throw error;
+
+      await loadSiteSettings();
+      alert('Configuración actualizada');
+    } catch (error) {
+      console.error('Error updating setting:', error);
+      alert('Error actualizando configuración');
+    }
+  };
 
   const loadPages = async () => {
     try {
@@ -264,24 +314,58 @@ export const CMSPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-3">
-              <FileText className="text-blue-600" />
+              <Settings className="text-blue-600" />
               <span>Sistema CMS</span>
             </h1>
-            <p className="text-gray-600 mt-1">Gestión de contenido del sitio web</p>
+            <p className="text-gray-600 mt-1">Gestión completa de contenido y diseño del sitio web</p>
           </div>
-          <button
-            onClick={() => openPageModal()}
-            className="bg-gradient-to-r from-red-600 to-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-red-700 hover:to-blue-700 transition-all flex items-center space-x-2"
-          >
-            <Plus size={20} />
-            <span>Nueva Página</span>
-          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Tabs */}
+        <div className="mb-6 border-b border-gray-200">
+          <div className="flex space-x-1">
+            <button
+              onClick={() => setActiveTab('pages')}
+              className={`px-6 py-3 font-semibold transition-colors flex items-center space-x-2 border-b-2 ${
+                activeTab === 'pages'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <FileText size={20} />
+              <span>Páginas y Contenido</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('design')}
+              className={`px-6 py-3 font-semibold transition-colors flex items-center space-x-2 border-b-2 ${
+                activeTab === 'design'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Palette size={20} />
+              <span>Diseño Global</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Pages Tab Content */}
+        {activeTab === 'pages' && (
+          <>
+            <div className="mb-4 flex justify-end">
+              <button
+                onClick={() => openPageModal()}
+                className="bg-gradient-to-r from-red-600 to-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-red-700 hover:to-blue-700 transition-all flex items-center space-x-2"
+              >
+                <Plus size={20} />
+                <span>Nueva Página</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Pages List */}
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Páginas</h2>
@@ -385,7 +469,234 @@ export const CMSPage: React.FC = () => {
               </div>
             </div>
           )}
-        </div>
+            </div>
+          </>
+        )}
+
+        {/* Design Tab Content */}
+        {activeTab === 'design' && siteSettings && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Logo Settings */}
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                <Image size={24} className="text-blue-600" />
+                <span>Configuración de Logo</span>
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">URL del Logo</label>
+                  <input
+                    type="text"
+                    value={siteSettings.logo.url}
+                    onChange={(e) => {
+                      const newSettings = { ...siteSettings.logo, url: e.target.value };
+                      updateSiteSetting('logo', newSettings);
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Ancho (px)</label>
+                    <input
+                      type="number"
+                      value={siteSettings.logo.width}
+                      onChange={(e) => {
+                        const newSettings = { ...siteSettings.logo, width: parseInt(e.target.value) };
+                        updateSiteSetting('logo', newSettings);
+                      }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Alto (px)</label>
+                    <input
+                      type="number"
+                      value={siteSettings.logo.height}
+                      onChange={(e) => {
+                        const newSettings = { ...siteSettings.logo, height: parseInt(e.target.value) };
+                        updateSiteSetting('logo', newSettings);
+                      }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Posición</label>
+                  <select
+                    value={siteSettings.logo.position}
+                    onChange={(e) => {
+                      const newSettings = { ...siteSettings.logo, position: e.target.value };
+                      updateSiteSetting('logo', newSettings);
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  >
+                    <option value="left">Izquierda</option>
+                    <option value="center">Centro</option>
+                    <option value="right">Derecha</option>
+                  </select>
+                </div>
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-gray-600 mb-2">Vista previa:</p>
+                  <img
+                    src={siteSettings.logo.url}
+                    alt="Logo preview"
+                    style={{ width: siteSettings.logo.width, height: siteSettings.logo.height }}
+                    className="border border-gray-200 rounded"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Colors Settings */}
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                <Palette size={24} className="text-blue-600" />
+                <span>Colores del Sitio</span>
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Color Primario (Inicio)</label>
+                  <input
+                    type="color"
+                    value={siteSettings.colors.primary.from}
+                    onChange={(e) => {
+                      const newSettings = { ...siteSettings.colors, primary: { ...siteSettings.colors.primary, from: e.target.value } };
+                      updateSiteSetting('colors', newSettings);
+                    }}
+                    className="w-full h-12 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Color Primario (Fin)</label>
+                  <input
+                    type="color"
+                    value={siteSettings.colors.primary.to}
+                    onChange={(e) => {
+                      const newSettings = { ...siteSettings.colors, primary: { ...siteSettings.colors.primary, to: e.target.value } };
+                      updateSiteSetting('colors', newSettings);
+                    }}
+                    className="w-full h-12 rounded-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Color de Texto</label>
+                  <input
+                    type="color"
+                    value={siteSettings.colors.text}
+                    onChange={(e) => {
+                      const newSettings = { ...siteSettings.colors, text: e.target.value };
+                      updateSiteSetting('colors', newSettings);
+                    }}
+                    className="w-full h-12 rounded-lg"
+                  />
+                </div>
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-gray-600 mb-2">Vista previa del gradiente:</p>
+                  <div
+                    className="h-16 rounded-lg"
+                    style={{
+                      background: `linear-gradient(to right, ${siteSettings.colors.primary.from}, ${siteSettings.colors.primary.to})`
+                    }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Fonts Settings */}
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                <Type size={24} className="text-blue-600" />
+                <span>Tipografía</span>
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Fuente de Encabezados</label>
+                  <select
+                    value={siteSettings.fonts.heading}
+                    onChange={(e) => {
+                      const newSettings = { ...siteSettings.fonts, heading: e.target.value };
+                      updateSiteSetting('fonts', newSettings);
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  >
+                    <option value="system-ui">System UI</option>
+                    <option value="Inter">Inter</option>
+                    <option value="Roboto">Roboto</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Georgia">Georgia</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Fuente del Cuerpo</label>
+                  <select
+                    value={siteSettings.fonts.body}
+                    onChange={(e) => {
+                      const newSettings = { ...siteSettings.fonts, body: e.target.value };
+                      updateSiteSetting('fonts', newSettings);
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  >
+                    <option value="system-ui">System UI</option>
+                    <option value="Inter">Inter</option>
+                    <option value="Roboto">Roboto</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Georgia">Georgia</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Buttons Settings */}
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
+                <Layout size={24} className="text-blue-600" />
+                <span>Botones</span>
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tamaño por Defecto</label>
+                  <select
+                    value={siteSettings.buttons.defaultSize}
+                    onChange={(e) => {
+                      const newSettings = { ...siteSettings.buttons, defaultSize: e.target.value };
+                      updateSiteSetting('buttons', newSettings);
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  >
+                    <option value="small">Pequeño</option>
+                    <option value="medium">Mediano</option>
+                    <option value="large">Grande</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Radio de Bordes (px)</label>
+                  <input
+                    type="number"
+                    value={siteSettings.buttons.borderRadius}
+                    onChange={(e) => {
+                      const newSettings = { ...siteSettings.buttons, borderRadius: parseInt(e.target.value) };
+                      updateSiteSetting('buttons', newSettings);
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-gray-600 mb-2">Vista previa:</p>
+                  <button
+                    style={{
+                      borderRadius: `${siteSettings.buttons.borderRadius}px`,
+                      background: `linear-gradient(to right, ${siteSettings.colors.primary.from}, ${siteSettings.colors.primary.to})`
+                    }}
+                    className="text-white px-6 py-3 font-semibold"
+                  >
+                    Botón de Ejemplo
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Page Modal */}
